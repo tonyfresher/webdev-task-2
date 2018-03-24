@@ -1,5 +1,6 @@
 'use strict';
 
+const accepts = require('express-accepts');
 const controller = require('./controllers/places');
 const errors = require('./controllers/errors');
 
@@ -10,7 +11,7 @@ module.exports = app => {
         .get('/search', controller.searchPlaces)
         .delete('/', controller.removePlaces)
         .patch('/swapped', controller.swapPlaces)
-        .post('/', controller.createPlace)
-        .patch('/:id', controller.editPlace)
+        .post('/', accepts('application/json'), controller.createPlace)
+        .patch('/:id', accepts('application/json'), controller.editPlace)
         .all('*', errors.error404);
 };

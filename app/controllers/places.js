@@ -49,11 +49,13 @@ exports.removePlaces = (req, res) => {
 
             return;
         }
+
+        res.json(place);
     } else {
         store.drop();
-    }
 
-    res.sendStatus(200);
+        res.sendStatus(200);
+    }
 };
 
 exports.swapPlaces = (req, res) => {
@@ -78,19 +80,19 @@ exports.createPlace = (req, res) => {
     const place = new Place(req.body.name, req.body.description);
     store.add(place);
 
-    res.sendStatus(201);
+    res.status(201).json(place);
 };
 
 exports.editPlace = (req, res) => {
     const hasRequiredParams = req.params.id &&
-        ((req.body.name && req.body.description) || req.body.visited);
+        (req.body.name || req.body.description || (req.body.visited !== undefined));
     if (!hasRequiredParams) {
-        errors.error404(req, res);
+        errors.error400(req, res);
 
         return;
     }
 
-    const place = store.edit(req.params.id, {
+    const place = store.edit(req.params.id.substring(3), {
         name: req.body.name,
         description: req.body.description,
         visited: req.body.visited
@@ -102,5 +104,5 @@ exports.editPlace = (req, res) => {
         return;
     }
 
-    res.sendStatus(200);
+    res.json(place);
 };
